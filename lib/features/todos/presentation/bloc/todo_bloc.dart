@@ -10,8 +10,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   TodoBloc({required TodoRepository todoRepository})
       : _todoRepository = todoRepository,
         super(TodoInitial()) {
-    var todos = <Todo>[];
-
     on<TodoEventFetchTodos>((event, emit) async {
       emit(TodoIsLoading());
 
@@ -74,4 +72,5 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   final TodoRepository _todoRepository;
+  List<Todo> todos = [];
 }

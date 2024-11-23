@@ -2,7 +2,7 @@ import 'package:djamo_todo_tdd_test/features/todos/presentation/views/todo_page.
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final _router = GoRouter(
+final router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
