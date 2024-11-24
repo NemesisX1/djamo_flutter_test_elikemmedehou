@@ -22,11 +22,6 @@ class TodoEventUpdateTodo extends TodoEvent {
   final Todo todo;
 }
 
-class TodoEventDeleteTodo extends TodoEvent {
-  TodoEventDeleteTodo(this.todo);
-  final Todo todo;
-}
-
 class TodoEventDeleteTodos extends TodoEvent {
   TodoEventDeleteTodos(this.todoIds);
   final List<int> todoIds;

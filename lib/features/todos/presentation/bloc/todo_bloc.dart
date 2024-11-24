@@ -13,10 +13,18 @@ part 'todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
   TodoBloc() : super(TodoInitial()) {
-    on<TodoEventFetchTodos>((event, emit) {
+    on<TodoEventFetchTodos>((event, emit) async {
       emit(TodoIsLoading());
 
-      _fetchTodos(emit);
+      final getTodosUseCase = locator<GetTodosUseCases>();
+
+      (await getTodosUseCase.call(NoParams())).fold(
+        (failure) => emit(TodoHasError(failure)),
+        (fechtedTodos) {
+          todos = fechtedTodos;
+          emit(TodoFetched(todos));
+        },
+      );
     });
 
     on<TodoEventAddTodo>((event, emit) async {
@@ -29,9 +37,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       ))
           .fold(
         (failure) => emit(TodoHasError(failure)),
-        (todo) => () {
-          _fetchTodos(emit);
-        },
+        (todo) => emit(TodoInitial()),
       );
     });
 
@@ -45,13 +51,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       ))
           .fold(
         (failure) => emit(TodoHasError(failure)),
-        (todo) => () {
-          _fetchTodos(emit);
-        },
+        (todo) => emit(TodoInitial()),
       );
     });
 
-    on<TodoEventToogleDeletion>((event, emit) async {
+    on<TodoEventToogleDeletion>((event, emit) {
       emit(TodoIsLoading());
 
       if (todoIdsToDelete.contains(event.todoId)) {
@@ -73,24 +77,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       ))
           .fold(
         (failure) => emit(TodoHasError(failure)),
-        (isDeleted) => () {
+        (isDeleted) {
           todoIdsToDelete.clear();
-          _fetchTodos(emit);
+          emit(
+            TodoInitial(),
+          );
         },
       );
     });
-  }
-
-  Future<void> _fetchTodos(Emitter<TodoState> emit) async {
-    final getTodosUseCase = locator<GetTodosUseCases>();
-
-    (await getTodosUseCase.call(NoParams())).fold(
-      (failure) => emit(TodoHasError(failure)),
-      (fechtedTodos) {
-        todos = fechtedTodos;
-        emit(TodoFetched(todos));
-      },
-    );
   }
 
   List<Todo> todos = [];

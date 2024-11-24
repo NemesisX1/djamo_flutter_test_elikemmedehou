@@ -77,7 +77,9 @@ class _TodoListTileState extends State<TodoListTile> {
               builder: (context) => _DeleteTodoDialog(),
             ).then((shouldDelete) {
               if (shouldDelete! && context.mounted) {
-                context.read<TodoBloc>().add(TodoEventDeleteTodo(widget.todo));
+                context.read<TodoBloc>().add(
+                      TodoEventDeleteTodos([widget.todo.id!]),
+                    );
               }
             });
           } else {
