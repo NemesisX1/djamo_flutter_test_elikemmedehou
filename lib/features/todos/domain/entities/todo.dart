@@ -1,6 +1,10 @@
+import 'package:dart_mappable/dart_mappable.dart';
 import 'package:equatable/equatable.dart';
 
-class Todo extends Equatable {
+part 'todo.mapper.dart';
+
+@MappableClass()
+class Todo extends Equatable with TodoMappable {
   const Todo({
     required this.title,
     required this.body,

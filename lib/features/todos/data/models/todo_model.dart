@@ -34,6 +34,7 @@ class TodoModel {
         id: id,
         body: body!,
         title: title!,
+        isCompleted: isCompleted,
         createdAt: createdAt,
         updatedAt: updatedAt,
       );

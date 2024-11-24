@@ -3,6 +3,7 @@ import 'package:djamo_todo_tdd_test/features/todos/presentation/bloc/todo_bloc.d
 import 'package:djamo_todo_tdd_test/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 
 class TodoDetailsPage extends StatelessWidget {
   const TodoDetailsPage(
@@ -16,15 +17,15 @@ class TodoDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => locator<TodoBloc>(),
-      child: _TodoDetailsView(
+      child: TodoDetailsView(
         todo,
       ),
     );
   }
 }
 
-class _TodoDetailsView extends StatelessWidget {
-  const _TodoDetailsView(this.todo);
+class TodoDetailsView extends StatelessWidget {
+  const TodoDetailsView(this.todo, {super.key});
 
   final Todo todo;
 
@@ -35,6 +36,32 @@ class _TodoDetailsView extends StatelessWidget {
         title: Text(
           todo.title,
         ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Gap(10),
+          const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
+            child: Text(
+              'Details',
+              style: TextStyle(
+                fontSize: 17,
+              ),
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
+            child: Text(
+              todo.body,
+            ),
+          ),
+        ],
       ),
     );
   }

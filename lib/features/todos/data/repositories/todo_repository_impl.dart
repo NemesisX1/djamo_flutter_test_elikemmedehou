@@ -58,6 +58,8 @@ class TodoRepositoryImpl implements TodoRepository {
         todo.id!,
         body: todo.body,
         title: todo.title,
+        isCompleted: todo.isCompleted,
+        createdAt: todo.createdAt!,
       );
 
       return savedTodo.toEntity;
@@ -77,6 +79,22 @@ class TodoRepositoryImpl implements TodoRepository {
       final isDeleted = await dataSource.deleteTodoFromDataSource(
         todo.id!,
       );
+
+      return isDeleted;
+    } catch (e, stack) {
+      if (kDebugMode) {
+        log('$e');
+        log(stack.toString());
+      }
+
+      throw LocalDataError();
+    }
+  }
+
+  @override
+  Future<bool> deleteTodos(List<int> ids) async {
+    try {
+      final isDeleted = await dataSource.deleteTodosFromDataSource(ids);
 
       return isDeleted;
     } catch (e, stack) {

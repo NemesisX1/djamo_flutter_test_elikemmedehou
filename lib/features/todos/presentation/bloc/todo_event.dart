@@ -12,12 +12,22 @@ class TodoEventAddTodo extends TodoEvent {
   final Todo todo;
 }
 
-class TodoEventDeleteTodo extends TodoEvent {
-  TodoEventDeleteTodo(this.todo);
-  final Todo todo;
+class TodoEventToogleDeletion extends TodoEvent {
+  TodoEventToogleDeletion(this.todoId);
+  final int todoId;
 }
 
 class TodoEventUpdateTodo extends TodoEvent {
   TodoEventUpdateTodo(this.todo);
   final Todo todo;
+}
+
+class TodoEventDeleteTodo extends TodoEvent {
+  TodoEventDeleteTodo(this.todo);
+  final Todo todo;
+}
+
+class TodoEventDeleteTodos extends TodoEvent {
+  TodoEventDeleteTodos(this.todoIds);
+  final List<int> todoIds;
 }

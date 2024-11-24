@@ -25,11 +25,13 @@ class TodoLocalDataSourceImpl implements TodoDataSource {
       ..createdAt = DateTime.now()
       ..updatedAt = DateTime.now();
 
-    await isar.txn(() async {
-      await isar.todoModels.put(
-        todo,
-      );
-    });
+    await isar.writeTxn(
+      () async {
+        await isar.todoModels.put(
+          todo,
+        );
+      },
+    );
 
     return todo;
   }
@@ -39,14 +41,18 @@ class TodoLocalDataSourceImpl implements TodoDataSource {
     Id id, {
     required String body,
     required String title,
+    required bool isCompleted,
+    required DateTime createdAt,
   }) async {
     final todo = TodoModel()
       ..id = id
       ..body = body
       ..title = title
+      ..isCompleted = isCompleted
+      ..createdAt = createdAt
       ..updatedAt = DateTime.now();
 
-    await isar.txn(() async {
+    await isar.writeTxn(() async {
       await isar.todoModels.put(
         todo,
       );
@@ -59,10 +65,25 @@ class TodoLocalDataSourceImpl implements TodoDataSource {
   Future<bool> deleteTodoFromDataSource(Id id) async {
     var isDeleted = false;
 
-    await isar.txn(() async {
+    await isar.writeTxn(() async {
       isDeleted = await isar.todoModels.delete(
         id,
       );
+    });
+
+    return isDeleted;
+  }
+
+  @override
+  Future<bool> deleteTodosFromDataSource(List<int> ids) async {
+    var isDeleted = false;
+
+    await isar.writeTxn(() async {
+      final deletedCount = await isar.todoModels.deleteAll(
+        ids,
+      );
+
+      isDeleted = deletedCount == ids.length;
     });
 
     return isDeleted;

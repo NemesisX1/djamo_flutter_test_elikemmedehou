@@ -7,6 +7,8 @@ abstract class TodoDataSource {
     int id, {
     required String body,
     required String title,
+    required bool isCompleted,
+    required DateTime createdAt,
   });
 
   Future<TodoModel> saveTodoOnDataSource({
@@ -15,4 +17,6 @@ abstract class TodoDataSource {
   });
 
   Future<bool> deleteTodoFromDataSource(int id);
+
+  Future<bool> deleteTodosFromDataSource(List<int> ids);
 }
