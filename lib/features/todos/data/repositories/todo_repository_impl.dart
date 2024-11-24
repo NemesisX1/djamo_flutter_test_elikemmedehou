@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:djamo_todo_tdd_test/core/shared/errors.dart';
+import 'package:djamo_todo_tdd_test/core/shared/exceptions.dart';
 import 'package:djamo_todo_tdd_test/features/todos/data/datasources/todo_data_source.dart';
 import 'package:djamo_todo_tdd_test/features/todos/domain/entities/todo.dart';
 import 'package:djamo_todo_tdd_test/features/todos/domain/repositories/todo_repository.dart';
@@ -63,24 +63,6 @@ class TodoRepositoryImpl implements TodoRepository {
       );
 
       return savedTodo.toEntity;
-    } catch (e, stack) {
-      if (kDebugMode) {
-        log('$e');
-        log(stack.toString());
-      }
-
-      throw LocalDataError();
-    }
-  }
-
-  @override
-  Future<bool> deleteTodo(Todo todo) async {
-    try {
-      final isDeleted = await dataSource.deleteTodoFromDataSource(
-        todo.id!,
-      );
-
-      return isDeleted;
     } catch (e, stack) {
       if (kDebugMode) {
         log('$e');

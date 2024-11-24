@@ -1,59 +1,54 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
+import 'package:djamo_todo_tdd_test/core/usecases/usecase.dart';
 import 'package:djamo_todo_tdd_test/features/todos/domain/entities/todo.dart';
-import 'package:djamo_todo_tdd_test/features/todos/domain/repositories/todo_repository.dart';
+import 'package:djamo_todo_tdd_test/features/todos/domain/usecases/add_todo_usecase.dart';
+import 'package:djamo_todo_tdd_test/features/todos/domain/usecases/delete_todos_usecase.dart';
+import 'package:djamo_todo_tdd_test/features/todos/domain/usecases/get_todos_usecase.dart';
+import 'package:djamo_todo_tdd_test/features/todos/domain/usecases/update_todo_usecase.dart';
+import 'package:djamo_todo_tdd_test/locator.dart';
 import 'package:equatable/equatable.dart';
 
 part 'todo_event.dart';
 part 'todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  TodoBloc({required TodoRepository todoRepository})
-      : _todoRepository = todoRepository,
-        super(TodoInitial()) {
-    on<TodoEventFetchTodos>((event, emit) async {
+  TodoBloc() : super(TodoInitial()) {
+    on<TodoEventFetchTodos>((event, emit) {
       emit(TodoIsLoading());
 
-      try {
-        todos = await _todoRepository.getTodos();
-
-        emit(TodoFetched(todos));
-      } catch (e) {
-        emit(TodoHasError(e));
-      }
+      _fetchTodos(emit);
     });
 
     on<TodoEventAddTodo>((event, emit) async {
       emit(TodoIsLoading());
 
-      try {
-        await _todoRepository.saveTodo(
-          event.todo,
-        );
+      final addTodoUseCase = locator<AddTodoUseCase>();
 
-        todos = await _todoRepository.getTodos();
-
-        emit(TodoFetched(todos));
-      } catch (e) {
-        emit(TodoHasError(e));
-      }
+      (await addTodoUseCase.call(
+        AddTodoParams(event.todo),
+      ))
+          .fold(
+        (failure) => emit(TodoHasError(failure)),
+        (todo) => () {
+          _fetchTodos(emit);
+        },
+      );
     });
 
     on<TodoEventUpdateTodo>((event, emit) async {
       emit(TodoIsLoading());
 
-      try {
-        await _todoRepository.updateTodo(
-          event.todo,
-        );
+      final updateTodoUseCase = locator<UpdateTodoUseCase>();
 
-        todos = await _todoRepository.getTodos();
-
-        emit(TodoFetched(todos));
-      } catch (e) {
-        emit(TodoHasError(e));
-      }
+      (await updateTodoUseCase.call(
+        UpdateTodoParams(event.todo),
+      ))
+          .fold(
+        (failure) => emit(TodoHasError(failure)),
+        (todo) => () {
+          _fetchTodos(emit);
+        },
+      );
     });
 
     on<TodoEventToogleDeletion>((event, emit) async {
@@ -71,23 +66,33 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoEventDeleteTodos>((event, emit) async {
       emit(TodoIsLoading());
 
-      try {
-        await _todoRepository.deleteTodos(
-          event.todoIds,
-        );
+      final deleteTodosUseCase = locator<DeleteTodosUseCase>();
 
-        todoIdsToDelete.clear();
-
-        todos = await _todoRepository.getTodos();
-
-        emit(TodoFetched(todos));
-      } catch (e) {
-        emit(TodoHasError(e));
-      }
+      (await deleteTodosUseCase.call(
+        DeleteTodosParams(event.todoIds),
+      ))
+          .fold(
+        (failure) => emit(TodoHasError(failure)),
+        (isDeleted) => () {
+          todoIdsToDelete.clear();
+          _fetchTodos(emit);
+        },
+      );
     });
   }
 
-  final TodoRepository _todoRepository;
+  Future<void> _fetchTodos(Emitter<TodoState> emit) async {
+    final getTodosUseCase = locator<GetTodosUseCases>();
+
+    (await getTodosUseCase.call(NoParams())).fold(
+      (failure) => emit(TodoHasError(failure)),
+      (fechtedTodos) {
+        todos = fechtedTodos;
+        emit(TodoFetched(todos));
+      },
+    );
+  }
+
   List<Todo> todos = [];
   List<int> todoIdsToDelete = [];
 }

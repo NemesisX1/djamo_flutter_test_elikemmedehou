@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:djamo_todo_tdd_test/features/todos/domain/entities/todo.dart';
 import 'package:djamo_todo_tdd_test/features/todos/presentation/bloc/todo_bloc.dart';
 import 'package:djamo_todo_tdd_test/features/todos/presentation/widgets/todo_operation_bottom_sheet_widget.dart';

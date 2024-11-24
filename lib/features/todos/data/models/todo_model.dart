@@ -13,14 +13,6 @@ class TodoModel {
     this.isCompleted = false,
   });
 
-  // factory TodoModel.fromEntity(Todo entity) {
-  //   return TodoModel(
-  //     id: entity.id,
-  //     body: entity.body,
-  //     title: entity.title,
-  //   );
-  // }
-
   Id? id = Isar.autoIncrement;
   String? title;
   String? body;
