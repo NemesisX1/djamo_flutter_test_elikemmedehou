@@ -79,9 +79,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         (failure) => emit(TodoHasError(failure)),
         (isDeleted) {
           todoIdsToDelete.clear();
-          emit(
-            TodoInitial(),
-          );
+          emit(TodoInitial());
         },
       );
     });
